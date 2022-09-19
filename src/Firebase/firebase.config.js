@@ -4,7 +4,8 @@ const firebaseConfig = {
    projectId: "simple-firebase-auth-a3217",
    storageBucket: "simple-firebase-auth-a3217.appspot.com",
    messagingSenderId: "519453026204",
-   appId: "1:519453026204:web:ad909145220c5c08fe4a59"
+   appId: "1:519453026204:web:ad909145220c5c08fe4a59",
+
  };
 
  export default firebaseConfig;
