@@ -35,9 +35,19 @@ function App() {
     const auth = getAuth();
     signInWithPopup(auth, providers)
     .then(result => {
-      const user = result.user;
+      const {displayName, email, photoURL} = result.user;
+      const loggedInUser = {
+        name: displayName,
+        email: email,
+        photo: photoURL
+      };
+      setUser(loggedInUser);
       console.log(user);
     })
+    .catch((error) => {
+      console.log(error.message);
+      
+    });
   }
 
 
@@ -48,7 +58,7 @@ function App() {
       <br/>
 
       {
-        user.email && <div>
+        user.name && <div>
           <h2>Welcome {user.name}</h2>
           <p>I know your email address: {user.email}</p>
           <img src={user.photo} alt="" />
