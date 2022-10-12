@@ -1,4 +1,4 @@
-import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signOut, createUserWithEmailAndPassword  } from 'firebase/auth';
+import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import './App.css';
 
@@ -13,8 +13,8 @@ function App() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const [error, setError] = useState('');
+  const [isLogin, setIsLogin] = useState(false);
 
 
 
@@ -62,6 +62,10 @@ function App() {
     })
   }
 
+  const toggleLogin =e => {
+    setIsLogin(e.target.checked);
+  }
+
   const handleEmailChange = e =>{
     setEmail(e.target.value);
   }
@@ -80,6 +84,27 @@ function App() {
       setError('Password must contain 2 upper case');
       return;
     }
+    if(isLogin){
+      processLogin(email, password);
+    }
+    else{
+      registerNewUser(email, password);
+    }
+
+  }
+
+  const processLogin = (email, password) =>{
+    signInWithEmailAndPassword(auth, email, password)
+    .then(result => {
+      const user = result.user;
+      console.log(user);
+    })
+    .catch(error =>{
+      setError(error.message);
+    })
+  }
+
+  const registerNewUser = (email, password) => {
     createUserWithEmailAndPassword(auth, email, password)
     .then(result => {
       const user =  result.user;
@@ -90,14 +115,12 @@ function App() {
       setError(error.message);
       
     });
-    
   }
-
   return (
     <div className="mx-5">
 
     <form onSubmit={handleRegistration}>
-      <h3 className='text-primary'>Pelase Register</h3>
+      <h3 className='text-primary'>Pelase {isLogin ? 'Login' : 'Register'}</h3>
       <div className="row mb-3">
         <label htmlFor="inputEmail3" className="col-sm-2 col-form-label">Email</label>
         <div className="col-sm-10">
@@ -114,15 +137,15 @@ function App() {
       <div className="row mb-3">
         <div className="col-sm-10 offset-sm-2">
           <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="gridCheck1"/>
+            <input onChange={toggleLogin} className="form-check-input" type="checkbox" id="gridCheck1"/>
             <label className="form-check-label" htmlFor="gridCheck1">
-              Example checkbox
+              Alreday Registerd? 
             </label>
           </div>
         </div>
       </div>
       <div className="row mb-3 text-danger">{error}</div>
-      <button type="submit" className="btn btn-primary">Sign in</button>
+      <button type="submit" className="btn btn-primary">{isLogin?'Login' : 'Register'}</button>
     </form>
           
       
