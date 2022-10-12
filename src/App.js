@@ -12,7 +12,11 @@ const providers = new GithubAuthProvider();
 function App() {
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('');
+
+  const [error, setError] = useState('');
+
+
 
   const [user, setUser] = useState({})
   const auth = getAuth();
@@ -66,13 +70,27 @@ function App() {
     setPassword(e.target.value);
   }
   const handleRegistration = e =>{
+    e.preventDefault();
     console.log(email, password);
+    if(password.length < 6){
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+    if(!/(?=.*[A-Z].*[A-Z])/.test(password)){
+      setError('Password must contain 2 upper case');
+      return;
+    }
     createUserWithEmailAndPassword(auth, email, password)
     .then(result => {
       const user =  result.user;
       console.log(user);
+      setError('');
     })
-    e.preventDefault();
+    .catch(error => {
+      setError(error.message);
+      
+    });
+    
   }
 
   return (
@@ -103,6 +121,7 @@ function App() {
           </div>
         </div>
       </div>
+      <div className="row mb-3 text-danger">{error}</div>
       <button type="submit" className="btn btn-primary">Sign in</button>
     </form>
           
