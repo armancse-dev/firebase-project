@@ -1,4 +1,4 @@
-import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword,sendEmailVerification,sendPasswordResetEmail,updateProfile } from 'firebase/auth';
+import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword,sendEmailVerification,sendPasswordResetEmail,updateProfile,FacebookAuthProvider } from 'firebase/auth';
 import { useState } from 'react';
 import './App.css';
 
@@ -8,9 +8,10 @@ initializeAuth();
 
 const provider = new GoogleAuthProvider();
 const providers = new GithubAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
 
 function App() {
-
+  const auth = getAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,7 +21,7 @@ function App() {
 
 
   const [user, setUser] = useState({})
-  const auth = getAuth();
+
   const handleGoogleSignIn = () =>{
     signInWithPopup(auth, provider)
     .then(result => {
@@ -37,6 +38,7 @@ function App() {
       
     });
   }
+
   const handleGithubSignIn = () =>{
     const auth = getAuth();
     signInWithPopup(auth, providers)
@@ -54,6 +56,21 @@ function App() {
       console.log(error.message);
       
     });
+  }
+
+  const handleFacebookSignIn = () =>{
+    signInWithPopup(auth,facebookProvider)
+    .then(result=>{
+      const {displayName, email, photoURL} = result.user;
+      console.log(result.user);
+      const loggedInUser = {
+        name: displayName,
+        email: email,
+        photo: photoURL
+      };
+      setUser(loggedInUser);
+      console.log(user);
+    })
   }
 
   const handleSignOut = () =>{
@@ -129,6 +146,13 @@ function App() {
     updateProfile(auth.currentUser, {
       displayName: name
     })
+    .then(() => {
+      // Profile updated!
+      // ...
+    }).catch((error) => {
+      // An error occurred
+      // ...
+    });
   }
 
   const verifyEmail = () =>{
@@ -194,6 +218,7 @@ function App() {
         <div>
           <button onClick={handleGoogleSignIn}>Google Sign In</button>
           <button onClick={handleGithubSignIn}>Github Sign In</button>
+          <button onClick={handleFacebookSignIn}>Facebook Sign In</button>
         </div>:
         <button onClick={handleSignOut}>Sign Out</button>
       }
